@@ -217,4 +217,4 @@ System that generates PDFs from form submissions with e signatures, plus a vendo
 
 I care about systems that actually run in production, not just demos. Every project listed here handles real traffic, real money, or real customer data.
 
-**Contact:** joshpaschall@gmail.com | Southern California | Remote
+**Contact:** joshpaschall@gmail.com | [LinkedIn](https://www.linkedin.com/in/joshpaschall/) | Southern California | Remote
