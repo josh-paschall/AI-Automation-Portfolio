@@ -80,7 +80,7 @@ Uses custom `sunrise.php` for domain resolution at the WordPress bootstrap level
 ## Plugin Architecture (~16K Lines PHP)
 
 ```
-my-waas-kit/
+multisite-saas-plugin/
 ├── includes/
 │   ├── class-mwsk-site-cloner.php           # Clone orchestration
 │   ├── class-mwsk-subscription-enforcer.php # Grace periods, locking

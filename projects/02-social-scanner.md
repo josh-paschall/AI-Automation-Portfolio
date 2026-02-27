@@ -89,10 +89,10 @@ CREATE TABLE sa_targets (
 
 Scan commands:
 ```bash
-python3 scanner.py mdk primary       # scan one brand, primary subs
-python3 scanner.py all primary       # scan all engagement brands
-python3 scanner.py whoknows-rvs primary  # scan one datamine site
-python3 scanner.py datamine primary  # scan all datamine sites
+python3 scanner.py brand-a primary       # scan one brand, primary subs
+python3 scanner.py all primary           # scan all engagement brands
+python3 scanner.py datamine-site primary # scan one datamine site
+python3 scanner.py datamine primary      # scan all datamine sites
 ```
 
 ## Code: Opportunity Scoring Engine
@@ -267,9 +267,9 @@ Persona profiles include: voice/tone rules, platform specific calibration, words
 
 | Site | Posts Scanned | Content Briefs | FAQ Items |
 |------|--------------|----------------|-----------|
-| RV Service Directory | 1,345 | 570 | Extracted |
-| Tourism Directory | 1,375 | 616 | Extracted |
-| Expert Witness Directory | 1,143 | 409 | Extracted |
+| Service Directory A | 1,345 | 570 | Extracted |
+| Service Directory B | 1,375 | 616 | Extracted |
+| Professional Directory C | 1,143 | 409 | Extracted |
 
 ## Tech Stack
 
@@ -283,4 +283,4 @@ Persona profiles include: voice/tone rules, platform specific calibration, words
 
 ## Status
 
-Scanner and data mining system operational. Running scans across 5 engagement brands and 3 datamine sites. Content intelligence pipeline producing structured output. Engagement reply posting (Phase 3) in development pending Late API inbox addon.
+Scanner and data mining system operational. Running scans across 5 engagement brands and 3 datamine sites. Content intelligence pipeline producing structured output. WordPress admin plugin with feed, conversations, brand management, and SMS integration built. Engagement reply posting in development.
