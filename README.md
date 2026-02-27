@@ -72,13 +72,13 @@ Cron (every 30 min)
 Late API: Search + Feed Pull
     |
     v
-Dedup + Keyword Filter (SQLite)
+Dedup + Keyword Filter (MySQL)
     |
     v
-Claude: Score Opportunity (1-10) + Draft Response
+Scoring Engine: Opportunity Score + Signal Classification
     |
     v
-Review Queue (Flask Dashboard)
+Review Queue (WordPress Admin Plugin)
     |
     v
 Human: Approve / Edit / Skip
@@ -132,38 +132,41 @@ Review posted to WordPress via REST API
 One video in, a full week of content out. Automated pipeline that turns a single video recording into YouTube content, blog posts, social media clips, email newsletters, and podcast audio.
 
 **What it does:**
-- Client uploads video through a WordPress dashboard
-- Whisper transcribes locally (no API cost, runs on dedicated VPS)
-- Claude generates all derivative content from transcript
-- FFmpeg handles video processing (trim, captions, clips, aspect ratio conversion)
-- Multi platform posting via Late API (YouTube, Instagram, Facebook, TikTok, LinkedIn, X)
-- Client reviews and approves everything through a content calendar before posting
+- Brand Kit compiles business profile into an LLM Index (auto cached, hourly refresh)
+- AI generates topic suggestions and two script versions from brand context
+- Client reviews scripts via magic link (no login required)
+- Client records video, Whisper transcribes locally (no API cost)
+- Claude generates all derivative content (blog, 13 platform social posts, newsletter) with per platform character limits
+- Client approves/edits/requests revisions via magic link before anything posts
+- Multi platform posting via Late API (YouTube, Instagram, Facebook, TikTok, LinkedIn, X, and more)
 
-**Tech:** Python/Flask, OpenAI Whisper (local), Claude API, FFmpeg, Late API, WordPress, Stripe Connect, FullCalendar.js
+**Tech:** Python/Flask, faster-whisper (local), Claude API, FFmpeg, Late API, WordPress, Stripe Connect, Alpine.js
 
 **Architecture:**
 ```
-Video Upload (chunked, direct to server)
+Brand Kit -> LLM Index (compiled business profile)
     |
     v
-Whisper Transcription (local, medium model)
+AI Script Generation (2 versions: structured + conversational)
     |
     v
-Claude Content Generation
-    |-- YouTube metadata (title, description, tags)
-    |-- Blog post (from transcript)
-    |-- Social media posts (per platform, per clip)
-    |-- Email newsletter draft
-    |-- Podcast audio extract
+Client Review via Magic Link
     |
     v
-FFmpeg Processing
-    |-- Caption burn in
-    |-- Clip extraction (short form cuts)
-    |-- Aspect ratio reformatting (16:9, 9:16, 1:1)
+Video Recording + Whisper Transcription (local)
     |
     v
-Client Review + Approval (content calendar)
+Claude Content Generation (transcript + brand context)
+    |-- YouTube metadata
+    |-- Blog post (1,000-2,000 words)
+    |-- Social posts (13 platforms, per platform char limits)
+    |-- Email newsletter
+    |
+    v
+FFmpeg Processing (clips, aspect ratios, text overlays)
+    |
+    v
+Client Approval via Magic Link (per item approve/edit/revise)
     |
     v
 Late API: Post to All Platforms
@@ -194,7 +197,7 @@ Production SaaS platform that auto provisions client websites on payment. Handle
 
 ### 6. Automated Document Generation and Compliance Tracking
 
-System that generates PDFs from form submissions with e signatures, plus a vendor compliance module that monitors documents, tracks expiration dates, and sends automated reminders.
+Built for a healthcare compliance platform handling protected health information (PHI). PDF generation from form submissions with e signatures, vendor compliance monitoring with automated reminders, and HIPAA compliant security (encryption + audit logging).
 
 **What it does:**
 - Dynamic form submissions generate branded PDFs via TCPDF
@@ -202,8 +205,8 @@ System that generates PDFs from form submissions with e signatures, plus a vendo
 - Vendor compliance dashboard tracks W9s, insurance certificates, license expiration
 - Automated reminder emails when documents approach expiration
 - Non compliant vendors flagged in admin dashboard
-- AES 256 GCM encryption for sensitive data (HIPAA ready)
-- Full audit logging with IP, user agent, and action tracking
+- AES 256 GCM encryption with key rotation for PHI data
+- HIPAA compliant audit logging (every action on sensitive data tracked with IP, user agent, details)
 
 **Tech:** PHP, WordPress, TCPDF, SMTP2GO, AES 256 GCM encryption, custom REST API, Alpine.js
 
