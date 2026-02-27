@@ -6,7 +6,7 @@ Real systems I've built and operate. Not tutorials, not toy projects. These are 
 
 I find manual processes and turn them into automated systems. My sweet spot is the full loop: identify the inefficiency, prototype a solution, wire up the APIs, deploy it, and keep it running. Most of my work connects AI/LLM services with existing business tools through custom Python backends and webhook orchestration.
 
-**Stack:** Python, Flask, JavaScript, REST APIs, webhooks, Claude/OpenAI APIs, Twilio, Stripe, n8n, Zapier, Make, WordPress, Airtable, Notion
+**Stack:** Python, Flask, PHP, JavaScript, REST APIs, webhooks, Claude/OpenAI APIs, Twilio, Stripe, WordPress, MySQL, FFmpeg
 
 ---
 
@@ -62,7 +62,7 @@ Two systems: (1) multi brand Reddit engagement scanner with AI scoring and perso
 - Throttled posting with rate limiting (no spam, no bans)
 - Tracks engagement and reply performance
 
-**Tech:** Python/Flask, Late API (Reddit read/write), Claude API (scoring + drafting), SQLite, APScheduler
+**Tech:** Python/Flask, Late API (Reddit read/write), Claude API (scoring + drafting), MySQL, WordPress plugin
 
 **Architecture:**
 ```
