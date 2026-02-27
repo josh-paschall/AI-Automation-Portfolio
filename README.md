@@ -212,12 +212,3 @@ Built for a healthcare compliance platform handling protected health information
 
 [Full project details](projects/06-document-compliance.md)
 
----
-
-## About Me
-
-20 years building for the web. 15+ years PHP/WordPress. 6 years Python and automation. Currently building multiple SaaS products while doing contract work.
-
-I care about systems that actually run in production, not just demos. Every project listed here handles real traffic, real money, or real customer data.
-
-**Contact:** joshpaschall@gmail.com | [LinkedIn](https://www.linkedin.com/in/joshpaschall/) | Southern California | Remote
