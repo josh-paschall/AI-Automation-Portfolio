@@ -95,13 +95,88 @@ multisite-saas-plugin/
 
 ### Serialization Safe URL Replacement
 
-WordPress stores serialized data (Elementor layouts, ACF fields, widget settings). A naive find/replace breaks serialized strings because the character count changes. The URL replacement engine:
+WordPress stores serialized data (Elementor layouts, ACF fields, widget settings). A naive SQL `REPLACE()` breaks serialized strings because PHP serialization includes string length markers. Change the URL, the length marker is wrong, and the entire serialized blob corrupts.
 
-1. Detects serialized strings
-2. Unserializes them
-3. Replaces URLs at the value level
-4. Re serializes with correct byte counts
-5. Handles nested serialization (serialized data inside serialized data)
+**The problem:**
+```
+Before: s:45:"https://template.site.com/image.jpg"
+After SQL REPLACE: s:45:"https://newsite.com/image.jpg"
+                   ^^^^^ length is now wrong = corrupt data
+```
+
+**The solution:** Recursive unserialize, replace at value level, re serialize (PHP recalculates correct lengths automatically).
+
+```php
+private function recursive_unserialize_replace($search, $replace, $data, $serialised = false) {
+    try {
+        // If data is serialized, unserialize it first
+        if (is_string($data) && ($unserialized = @unserialize($data)) !== false) {
+            $data = $this->recursive_unserialize_replace($search, $replace, $unserialized, true);
+        } elseif (is_array($data)) {
+            $_tmp = array();
+            foreach ($data as $key => $value) {
+                $_tmp[$key] = $this->recursive_unserialize_replace($search, $replace, $value, false);
+            }
+            $data = $_tmp;
+            unset($_tmp);
+        } elseif (is_object($data)) {
+            if (get_class($data) === '__PHP_Incomplete_Class') {
+                return $data;
+            }
+            $_tmp = $data;
+            $props = get_object_vars($data);
+            foreach ($props as $key => $value) {
+                $_tmp->$key = $this->recursive_unserialize_replace($search, $replace, $value, false);
+            }
+            $data = $_tmp;
+            unset($_tmp);
+        } elseif (is_string($data)) {
+            $data = str_replace($search, $replace, $data);
+        }
+
+        // Re-serialize with correct byte counts
+        if ($serialised) {
+            return serialize($data);
+        }
+    } catch (Exception $e) {
+        error_log('recursive_unserialize_replace error: ' . $e->getMessage());
+    }
+
+    return $data;
+}
+```
+
+The database operation finds matching rows, runs each value through the recursive replacer, and only updates rows where the value actually changed:
+
+```php
+private function serialized_search_replace($table, $column, $search, $replace) {
+    global $wpdb;
+
+    $primary_key = $this->get_primary_key($table);
+    if (!$primary_key) return 0;
+
+    $rows = $wpdb->get_results($wpdb->prepare(
+        "SELECT `{$primary_key}`, `{$column}` FROM `{$table}` WHERE `{$column}` LIKE %s",
+        '%' . $wpdb->esc_like($search) . '%'
+    ));
+
+    $updated = 0;
+    foreach ($rows as $row) {
+        $original_value = $row->$column;
+        $new_value = $this->recursive_unserialize_replace($search, $replace, $original_value);
+
+        if ($new_value !== $original_value) {
+            $wpdb->update($table, array($column => $new_value),
+                array($primary_key => $row->{$primary_key}));
+            $updated++;
+        }
+    }
+
+    return $updated;
+}
+```
+
+Handles replacement across: post_content, post_excerpt, guid, all postmeta (Elementor `_elementor_data`, ACF fields, widget settings), options table, and both normal and escaped URLs (for JSON stored in Elementor).
 
 ### Custom Elementor Widgets (14+)
 
